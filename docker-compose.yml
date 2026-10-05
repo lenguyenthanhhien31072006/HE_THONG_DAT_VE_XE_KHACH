@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: datvexe-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: datvexe
+      POSTGRES_USER: datvexe_user
+      POSTGRES_PASSWORD: datvexe_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/database/schema:/docker-entrypoint-initdb.d/schema:ro
+      - ./docs/database/seed:/docker-entrypoint-initdb.d/seed:ro
+
+volumes:
+  postgres_data:
