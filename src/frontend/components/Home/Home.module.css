@@ -94,9 +94,30 @@
 }
 
 .inputDivider {
-  color: var(--border);
+  color: var(--primary);
   font-size: 1.5rem;
-  padding: 0 var(--space-xs);
+  padding: var(--space-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+@media (max-width: 768px) {
+  .inputDivider {
+    /* Hiển thị trên mobile với nút xoay dọc */
+    display: flex;
+    transform: rotate(90deg);
+    padding: var(--space-xs);
+  }
+  .inputDivider:hover {
+    transform: scale(1.1) rotate(270deg);
+  }
 }
 
 .searchBtn {
