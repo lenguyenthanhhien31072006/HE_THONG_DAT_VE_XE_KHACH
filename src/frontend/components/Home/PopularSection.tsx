@@ -34,7 +34,7 @@ export default function PopularSection() {
             
             <div className={styles.routesGrid} ref={sliderRef}>
               {popularRoutes.map((route) => (
-                <Link href="/tim-chuyen" key={route.id} className={styles.routeCard}>
+                <Link href={`/tim-chuyen?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}`} key={route.id} className={styles.routeCard}>
                   <div className={styles.routeImage}>
                     <div style={{ width: '100%', height: '100%', background: 'linear-gradient(45deg, #1A5BB8, #2474E5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2rem' }}>
                       🚌
@@ -62,7 +62,12 @@ export default function PopularSection() {
           <h2 className="section-title">Bến xe nổi bật</h2>
           <div className={styles.stationsGrid}>
             {busStationCards.map((station) => (
-              <div key={station.id} className={styles.stationCard}>
+              <Link 
+                href={`/tim-chuyen?from=${encodeURIComponent(station.city)}&station=${encodeURIComponent(station.name)}`}
+                key={station.id} 
+                className={styles.stationCard}
+                style={{ textDecoration: 'none' }}
+              >
                  <div className={styles.stationImage}>
                    <div style={{ width: '100%', height: '100%', background: '#E8F0FE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
                     🏢
@@ -72,7 +77,7 @@ export default function PopularSection() {
                     <h3 className={styles.stationName}>{station.name}</h3>
                     <p className={styles.stationCity}>{station.city}</p>
                  </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

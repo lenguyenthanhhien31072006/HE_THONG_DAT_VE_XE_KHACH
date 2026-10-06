@@ -365,15 +365,22 @@ export function generateMockTrips(fromId: string, toId: string, date: string): T
     },
   ];
 
-  return tripTemplates.map((t, index) => ({
-    ...t,
-    id: `trip-${fromId}-${toId}-${index + 1}`,
-    from,
-    to,
-    fromStation: from.stations[0],
-    toStation: to.stations[0],
-  }));
+  return tripTemplates.map((t, index) => {
+    // Lấy xoay vòng các bến xe hiện có của địa điểm
+    const currentFromStation = from.stations[index % from.stations.length];
+    const currentToStation = to.stations[index % to.stations.length];
+
+    return {
+      ...t,
+      id: `trip-${fromId}-${toId}-${index + 1}`,
+      from,
+      to,
+      fromStation: currentFromStation,
+      toStation: currentToStation,
+    };
+  });
 }
+
 
 // --- Generate Seat Map ---
 export function generateSeatMap(vehicleType: VehicleType, totalSeats: number): Seat[] {
