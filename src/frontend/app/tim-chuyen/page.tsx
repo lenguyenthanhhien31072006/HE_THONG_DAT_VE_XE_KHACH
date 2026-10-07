@@ -1,6 +1,6 @@
 import { generateMockTrips, locations } from '../../lib/mock-data';
-import TripCard from '../../components/Search/TripCard';
 import SearchResults from '../../components/Search/SearchResults';
+import CompactSearch from '../../components/Search/CompactSearch';
 import styles from '../../components/Search/Search.module.css'; 
 
 // Nâng cấp: Hàm trả về cả thông tin Tỉnh/Thành phố VÀ Bến xe (nếu có)
@@ -47,10 +47,15 @@ export default async function SearchPage({
   searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
   const params = await searchParams;
-  const fromQuery = params.from;
-  const toQuery = params.to;
-  const dateQuery = params.date || '2026-10-06';
-  const urlStationQuery = params.station; // Tham số từ thẻ Bến xe nổi bật
+  const fromQuery = params.from || ''; // Gắn chuỗi rỗng nếu không có
+  const toQuery = params.to || '';
+  
+  // Xử lý lấy ngày hiện tại làm fallback nếu URL không có ngày
+  const d = new Date();
+  const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const dateQuery = params.date || todayStr;
+  
+  const urlStationQuery = params.station;// Tham số từ thẻ Bến xe nổi bật
 
   // Kiểm tra nhập liệu
   if (!fromQuery || !toQuery) {
@@ -99,18 +104,16 @@ export default async function SearchPage({
     );
   }
 
-  // Tạo tiêu đề trang động
-  let pageTitle = `Xe khách đi ${toParsed.location.name} từ ${fromParsed.location.name}`;
-  if (filterFromStation) {
-    pageTitle = `Các chuyến xe xuất phát từ ${filterFromStation}`;
-  } else if (toParsed.station) {
-    pageTitle = `Các chuyến xe đến ${toParsed.station.name}`;
-  }
-
   return (
     <div className={styles.searchPage}>
       <div className="container">
-        <h1 className="section-title" style={{ marginBottom: '1.5rem' }}>{pageTitle}</h1>
+        
+        {/* 2. Thêm thanh tìm kiếm thu gọn vào đây */}
+        <CompactSearch 
+          initialFrom={fromQuery} 
+          initialTo={toQuery} 
+          initialDate={dateQuery} 
+        />
         
         <SearchResults initialTrips={trips} />
       </div>
