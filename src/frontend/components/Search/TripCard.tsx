@@ -1,6 +1,6 @@
 import { Trip, formatPrice } from '../../lib/mock-data';
 import styles from './Search.module.css';
-import Link from 'next/link';
+
 export default function TripCard({ trip }: { trip: Trip }) {
   return (
     <div className={styles.tripCard}>
@@ -39,9 +39,7 @@ export default function TripCard({ trip }: { trip: Trip }) {
           )}
           <span className={styles.price}>{formatPrice(trip.price)}</span>
           <br />
-          <Link href={`/chuyen-xe/${trip.id}`} className={styles.selectBtn}>
-  Chọn chuyến
-</Link>
+          <button className={styles.selectBtn}>Chọn chuyến</button>
         </div>
       </div>
     </div>

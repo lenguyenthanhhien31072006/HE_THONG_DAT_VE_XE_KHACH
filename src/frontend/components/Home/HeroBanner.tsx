@@ -1,18 +1,48 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './Home.module.css';
 
+// Hàm hỗ trợ lấy chuỗi ngày YYYY-MM-DD
+const getLocalDateString = (daysToAdd = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + daysToAdd);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export default function HeroBanner() {
+  const router = useRouter();
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const [date, setDate] = useState('');
+  
+  // Khởi tạo state ngay từ đầu (Lazy initialization)
+  const [date, setDate] = useState(() => getLocalDateString(0));
+  
+  // Các biến không thay đổi trong suốt vòng đời component thì không cần dùng State
+  const minDate = getLocalDateString(0);
+  const maxDate = getLocalDateString(7);
 
+  const handleSwap = () => {
+    const temp = from;
+    setFrom(to);
+    setTo(temp);
+  };
+  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Tạm thời log ra console, sau này sẽ chuyển hướng sang trang tìm kiếm
-    console.log('Tìm chuyến:', { from, to, date });
-    alert(`Đang tìm chuyến xe từ ${from || '...'} đến ${to || '...'} vào ngày ${date || '...'}`);
+    
+    // Gom các giá trị nhập vào thành tham số URL
+    const query = new URLSearchParams();
+    if (from) query.append('from', from.trim());
+    if (to) query.append('to', to.trim());
+    if (date) query.append('date', date);
+    
+    // Chuyển hướng sang trang kết quả
+    router.push(`/tim-chuyen?${query.toString()}`);
   };
 
   return (
@@ -20,7 +50,7 @@ export default function HeroBanner() {
       <div className={styles.heroOverlay}>
         <div className="container">
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>HỆ THỐNG ĐẶT VÉ XE KHÁCH</h1>
+            <h1 className={styles.heroTitle}>VeXe - Cam kết hoàn tiền 150% nếu không có chỗ</h1>
             
             <form className={styles.searchForm} onSubmit={handleSearch}>
               <div className={styles.searchInputs}>
@@ -33,11 +63,14 @@ export default function HeroBanner() {
                       placeholder="Chọn điểm đi" 
                       value={from}
                       onChange={(e) => setFrom(e.target.value)}
+                      required /* Bắt buộc nhập */
                     />
                   </div>
                 </div>
                 
-                <div className={styles.inputDivider}>⇄</div>
+                <button type="button" className={styles.inputDivider} onClick={handleSwap} aria-label="Đổi chiều">
+                  ⇄
+                </button>
                 
                 <div className={styles.inputGroup}>
                   <span className={styles.inputIcon}>🎯</span>
@@ -48,6 +81,7 @@ export default function HeroBanner() {
                       placeholder="Chọn điểm đến" 
                       value={to}
                       onChange={(e) => setTo(e.target.value)}
+                      required /* Bắt buộc nhập */
                     />
                   </div>
                 </div>
@@ -59,7 +93,12 @@ export default function HeroBanner() {
                     <input 
                       type="date" 
                       value={date}
+                      min={minDate}
+                      max={maxDate}
                       onChange={(e) => setDate(e.target.value)}
+                      required
+                      suppressHydrationWarning 
+                      /* suppressHydrationWarning giúp ẩn lỗi nếu ngày của Server Next.js khác ngày của máy tính người dùng */
                     />
                   </div>
                 </div>

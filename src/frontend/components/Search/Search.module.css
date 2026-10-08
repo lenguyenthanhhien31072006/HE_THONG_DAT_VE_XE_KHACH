@@ -136,18 +136,12 @@
 }
 
 .selectBtn {
-  display: inline-block; /* Bắt buộc để thẻ Link nhận kích thước */
   background: var(--accent);
-  color: var(--text-white) !important; /* Ép chữ màu trắng, tránh màu xanh của link */
+  color: var(--text-white);
   padding: 8px 24px;
   border-radius: var(--radius-sm);
   font-weight: 600;
   margin-top: 8px;
-  text-decoration: none; /* Bỏ gạch chân */
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  transition: background var(--transition-fast);
 }
 
 .selectBtn:hover {
