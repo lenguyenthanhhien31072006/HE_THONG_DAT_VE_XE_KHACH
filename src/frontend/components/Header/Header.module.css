@@ -1,129 +1,116 @@
-.mainHeader {
+/* ---- MAIN HEADER ---- */
+.header {
   background: var(--primary-gradient);
-  padding: 12px 0;
+  padding: 0; /* Đưa padding vào headerContainer để dễ kiểm soát box-sizing */
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-md);
 }
 
-.mainHeaderInner {
+.headerContainer {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 12px var(--space-md);
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: var(--space-xl);
+  width: 100%;
 }
 
-.logo {
+/* ---- (Logo & Nút chọn dịch vụ) ---- */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.logoGroup {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   color: var(--text-white);
-  font-size: var(--font-size-xl);
-  font-weight: 800;
   text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
+  cursor: pointer;
 }
 
 .logoIcon {
   font-size: 2rem;
 }
 
-.logoText {
+.logoTextGroup {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
 }
 
-.logoText span:first-child {
+.logoName {
   font-size: var(--font-size-xl);
   font-weight: 800;
   letter-spacing: -0.5px;
 }
 
-.logoText span:last-child {
+.logoSlogan {
   font-size: var(--font-size-xs);
   font-weight: 400;
   opacity: 0.8;
 }
 
-.navTabs {
-  display: flex;
-  gap: 2px;
-  flex-shrink: 0;
-}
-
-.navTab {
+.serviceBtn {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
   border-radius: var(--radius-full);
-  color: rgba(255, 255, 255, 0.85);
-  background: transparent;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.navTab:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.navTabActive {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--text-white);
   font-weight: 600;
-}
-
-.navTabIcon {
-  font-size: 1.1rem;
-}
-
-/* Updated Right Section */
-.headerRight {
-  display: flex;
-  align-items: center;
-  gap: var(--space-lg);
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.actionLinks {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.actionLink {
-  color: rgba(255, 255, 255, 0.85);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  border: none;
   cursor: pointer;
-  transition: color var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: 4px;
   white-space: nowrap;
 }
 
-.actionLink:hover {
-  color: #fff;
+.centerSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px; /* Dàn đều khoảng cách giữa các link */
+  flex: 1; /* Chiếm toàn bộ không gian còn trống ở giữa */
 }
 
-.hotline {
-  color: var(--accent);
+.navLink {
+  color: #ffffff; 
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+
+.navLink:hover {
+  opacity: 0.8;
+}
+
+/* ---- (Hotline & Đăng nhập) ---- */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hotlineBox {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px; /* Đóng khung vuông bo góc */
+  font-size: var(--font-size-sm);
   font-weight: 700;
-}
-
-.hotline:hover {
-  color: var(--accent-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
 }
 
 .loginBtn {
@@ -138,7 +125,7 @@
   font-size: var(--font-size-sm);
   border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast);
   white-space: nowrap;
 }
 
@@ -146,91 +133,38 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Trust Badges */
-.trustBar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-light);
-  padding: 10px 0;
-}
-
-.trustBarInner {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-  display: flex;
-  justify-content: center;
-  gap: var(--space-2xl);
-}
-
-.trustBadge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-}
-
-.trustBadgeIcon {
-  font-size: 1.2rem;
-}
-
-/* Mobile Menu */
+/* ---- MOBILE MENU ---- */
 .mobileMenuBtn {
   display: none;
   background: none;
+  border: none;
   color: white;
   font-size: 1.5rem;
   padding: 4px;
+  cursor: pointer;
 }
 
 .mobileMenu {
   display: none;
 }
 
-.mobileMenuDivider {
-  border: 0;
-  height: 1px;
-  background: var(--border-light);
-  margin: var(--space-sm) 0;
-}
-
-.mobileActionLink {
-  color: var(--text-primary);
-  padding: 10px 16px;
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-}
-
-.mobileHotline {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .navTabs {
-    display: none;
-  }
-}
-
-@media (max-width: 900px) {
-  .actionLinks {
+/* ---- RESPONSIVE ---- */
+@media (max-width: 1024px) {
+  /* Ẩn bớt link ở giữa khi màn hình iPad/Tablet dọc để tránh tràn ngang */
+  .centerSection {
     display: none;
   }
 }
 
 @media (max-width: 768px) {
   .mobileMenuBtn {
-    display: flex;
+    display: block; /* Hiện nút Hamburger */
   }
   
-  .headerRight .loginBtn {
-    display: none;
-  }
-  
-  .mainHeaderInner {
-    gap: var(--space-md);
+  .rightSection .loginBtn, 
+  .rightSection .hotlineBox, 
+  .leftSection .serviceBtn {
+    display: none; /* Ẩn Hotline, Đăng nhập, và Nút dịch vụ trên Mobile */
   }
   
   .trustBarInner {
@@ -251,16 +185,21 @@
     background: var(--surface);
     padding: var(--space-md);
     border-bottom: 1px solid var(--border);
-    animation: fadeIn 0.2s ease;
   }
   
   .mobileMenu .navTab {
+    background: transparent;
+    border: none;
+    text-align: left;
     color: var(--text-primary);
     padding: 12px 16px;
     border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
   }
   
-  .mobileMenu .navTab:hover, .mobileMenu .navTabActive {
+  .mobileMenu .navTab:hover, 
+  .mobileMenu .navTabActive {
     background: var(--primary-light);
     color: var(--primary);
   }

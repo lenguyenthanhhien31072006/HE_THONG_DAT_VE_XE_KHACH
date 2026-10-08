@@ -1,47 +1,41 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import styles from './Header.module.css';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header>
-      {/* Main Header */}
-      <div className={styles.mainHeader}>
-        <div className={styles.mainHeaderInner}>
-          <Link href="/" className={styles.logo}>
+    <header className={styles.header}>
+      <div className={`container ${styles.headerContainer}`}>
+        
+        <div className={styles.leftSection}>
+          <div className={styles.logoGroup}>
             <span className={styles.logoIcon}>🚌</span>
-            <span className={styles.logoText}>
-              <span>VeXe</span>
-              <span>Đặt vé xe khách online</span>
-            </span>
-          </Link>
-
-          <nav className={styles.navTabs}>
-            <button className={`${styles.navTab} ${styles.navTabActive}`}>
-              <span className={styles.navTabIcon}>🚌</span>
-              Xe khách
-            </button>
-          </nav>
-          <div className={styles.headerRight}>
-            <div className={styles.actionLinks}>
-               <span className={styles.actionLink}>📋 Đơn hàng của tôi</span>
-               <span className={styles.actionLink}>🏢 Mở bán vé trên VeXe</span>
-               <span className={styles.actionLink}>🤝 Trở thành đối tác</span>
-               <span className={`${styles.actionLink} ${styles.hotline}`}>
-                  📞 Hotline 24/7
-               </span>
+            <div className={styles.logoTextGroup}>
+              <span className={styles.logoName}>VeXe</span>
+              <span className={styles.logoSlogan}>Đặt vé xe khách online</span>
             </div>
-          </div>  
-          <div className={styles.headerRight}>
-            <button className={styles.loginBtn}>
-              👤 Đăng nhập
-            </button>
           </div>
+          <button className={styles.serviceBtn}>🚌 Xe khách</button>
+        </div>
 
+        <nav className={styles.centerSection}>
+          <a href="#" className={styles.navLink}>Đơn hàng của tôi</a>
+          <a href="#" className={styles.navLink}>Mở bán vé trên VeXe</a>
+          <a href="#" className={styles.navLink}>Trở thành đối tác</a>
+        </nav> 
+
+        <div className={styles.rightSection}>
+          <div className={styles.hotlineBox}>
+            📞 Hotline 24/7
+          </div>
+          <button className={styles.loginBtn}>
+            👤 Đăng nhập
+          </button>
+          
+          {/* Nút Mobile Menu nằm ở góc phải */}
           <button
             className={styles.mobileMenuBtn}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -49,8 +43,8 @@ export default function Header() {
           >
             {mobileMenuOpen ? '✕' : '☰'}
           </button>
-        </div>
-      </div>
+        </div>  
+      </div>    
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
@@ -62,27 +56,6 @@ export default function Header() {
         </div>
       )}
 
-      {/* Trust Badges */}
-      <div className={styles.trustBar}>
-        <div className={styles.trustBarInner}>
-          <div className={styles.trustBadge}>
-            <span className={styles.trustBadgeIcon}>✅</span>
-            Chắc chắn có chỗ
-          </div>
-          <div className={styles.trustBadge}>
-            <span className={styles.trustBadgeIcon}>🕐</span>
-            Hỗ trợ 24/7
-          </div>
-          <div className={styles.trustBadge}>
-            <span className={styles.trustBadgeIcon}>🎁</span>
-            Nhiều ưu đãi
-          </div>
-          <div className={styles.trustBadge}>
-            <span className={styles.trustBadgeIcon}>💳</span>
-            Thanh toán đa dạng
-          </div>
-        </div>
-      </div>
     </header>
   );
 }

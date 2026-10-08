@@ -1,0 +1,159 @@
+.seatMapContainer {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--space-lg);
+}
+
+/* ---- Chú thích màu sắc ---- */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.seatBox {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+/* ---- Trạng thái ghế ---- */
+.seatAvailable {
+  background: #f0f2f5;
+  border: 1px solid #d9d9d9;
+  color: var(--text-primary);
+}
+
+.seatSelected {
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  color: var(--primary-dark);
+}
+
+.seatBooked {
+  background: #e6e6e6;
+  border: 1px solid #cccccc;
+  color: #999999;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.seatBooked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 2px;
+  background-color: #999;
+  border-radius: 2px;
+}
+
+/* ---- Bố cục 2 tầng ---- */
+.floorsWrapper {
+  display: flex;
+  gap: var(--space-2xl);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.floor {
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.floorTitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+/* Khung xe bo tròn */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 dãy A, B, C */
+  gap: 12px;
+  background: var(--bg-primary);
+  padding: 32px 16px;
+  border-radius: 30px 30px 10px 10px; /* Làm đầu xe bo tròn */
+  border: 4px solid var(--border-light);
+}
+
+.seat {
+  width: 100%;
+  aspect-ratio: 2/3; /* Tỉ lệ hình chữ nhật đứng (giống cái giường) */
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.seat:hover:not(.seatBooked) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* ---- Thanh tổng kết bên dưới ---- */
+.summary {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summaryInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.totalPrice {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.continueBtn {
+  background: var(--accent);
+  color: var(--text-white);
+  border: none;
+  padding: 0 32px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.continueBtn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.continueBtn:disabled {
+  background: var(--border-light);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}

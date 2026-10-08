@@ -69,6 +69,27 @@ export default function HeroBanner() {
           </div>
         </div>
       </div>
+      {/* Trust Badges (Thanh cam kết) */}
+      <div className={styles.trustBar}>
+        <div className={styles.trustBarInner}>
+          <div className={styles.trustBadge}>
+            <span className={styles.trustBadgeIcon}>✅</span>
+            Chắc chắn có chỗ
+          </div>
+          <div className={styles.trustBadge}>
+            <span className={styles.trustBadgeIcon}>🕐</span>
+            Hỗ trợ 24/7
+          </div>
+          <div className={styles.trustBadge}>
+            <span className={styles.trustBadgeIcon}>🎁</span>
+            Nhiều ưu đãi
+          </div>
+          <div className={styles.trustBadge}>
+            <span className={styles.trustBadgeIcon}>💳</span>
+            Thanh toán đa dạng
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
