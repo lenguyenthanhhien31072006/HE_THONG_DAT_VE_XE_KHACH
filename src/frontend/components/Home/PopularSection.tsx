@@ -35,14 +35,6 @@ export default function PopularSection() {
             
             <div className={styles.routesGrid} ref={sliderRef}>
               {popularRoutes.map((route) => (
-<<<<<<< Updated upstream
-                <Link href="/tim-chuyen" key={route.id} className={styles.routeCard}>
-                  <div className={styles.routeImage}>
-                    <div style={{ width: '100%', height: '100%', background: 'linear-gradient(45deg, #1A5BB8, #2474E5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '2rem' }}>
-                      🚌
-                    </div>
-                  </div>
-=======
                 <Link href={`/tim-chuyen?from=${encodeURIComponent(route.from)}&to=${encodeURIComponent(route.to)}`} key={route.id} className={styles.routeCard}>
                 <div className={styles.imageWrapper}>
                   <Image 
@@ -53,7 +45,6 @@ export default function PopularSection() {
                     className={styles.cardImage} 
                   />
                 </div>
->>>>>>> Stashed changes
                   <div className={styles.routeInfo}>
                     <h3 className={styles.routeName}>{route.from} - {route.to}</h3>
                     <div className={styles.routePricing}>
@@ -76,15 +67,6 @@ export default function PopularSection() {
           <h2 className="section-title">Bến xe nổi bật</h2>
           <div className={styles.stationsGrid}>
             {busStationCards.map((station) => (
-<<<<<<< Updated upstream
-              <div key={station.id} className={styles.stationCard}>
-                 <div className={styles.stationImage}>
-                   <div style={{ width: '100%', height: '100%', background: '#E8F0FE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                    🏢
-                   </div>
-                 </div>
-                 <div className={styles.stationInfo}>
-=======
               <Link 
                 href={`/tim-chuyen?from=${encodeURIComponent(station.city)}&station=${encodeURIComponent(station.name)}`}
                 key={station.id} 
@@ -101,11 +83,10 @@ export default function PopularSection() {
                 />  
               </div>
               <div className={styles.stationInfo}>
->>>>>>> Stashed changes
                     <h3 className={styles.stationName}>{station.name}</h3>
                     <p className={styles.stationCity}>{station.city}</p>
-                 </div>
-              </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
