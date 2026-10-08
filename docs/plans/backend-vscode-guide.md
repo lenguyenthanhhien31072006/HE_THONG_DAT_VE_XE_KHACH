@@ -1,122 +1,105 @@
-# Chạy và kiểm tra backend trong VS Code trên Windows
+# Chạy và kiểm tra backend trên Windows với VS Code
 
-Các lệnh bên dưới dùng terminal **Git Bash** của VS Code, mở tại thư mục gốc `HE_THONG_DAT_VE_XE_KHACH`. Dùng nhánh `feat/route-trip-management`.
+Hướng dẫn này ghi lại quy trình đã chạy thử trên Windows 11, VS Code và terminal **Git Bash**, tại thư mục gốc `HE_THONG_DAT_VE_XE_KHACH`, nhánh `feat/route-trip-management`. Backend dùng Java 21, Maven, PostgreSQL và Tomcat 10.1 chạy bằng Docker.
 
-## 1. Công cụ cần cài
+## 1. Công cụ và kiểm tra môi trường
 
-- JDK 21; `JAVA_HOME` trỏ tới JDK 21 và `PATH` có thư mục `bin` của JDK.
-- Apache Maven 3.9.9 (hoặc Maven 3.9.x); `PATH` có thư mục `bin` của Maven.
-- Docker Desktop đang chạy, dùng Linux containers.
-- Python 3 để chạy bộ kiểm tra API; Windows Python launcher `py`.
-- VS Code; có thể cài **Extension Pack for Java** để đọc/debug mã Java.
+Đã kiểm tra thành công với:
 
-Kiểm tra:
+- Eclipse Temurin JDK `21.0.12.1`, giải nén tại `C:\Tools\jdk-21.0.12.1+1`.
+- Apache Maven `3.10.0`, cài tại `C:\Tools\apache-maven-3.10.0`.
+- Docker Desktop đang chạy Linux containers.
+- Python 3 có launcher Windows `py`.
 
-```bash
+Đặt `JAVA_HOME` tới thư mục gốc JDK (thư mục chứa `bin`), rồi thêm `%JAVA_HOME%\bin` vào `Path`. Đóng và mở lại terminal sau khi lưu biến môi trường. Kiểm tra trong PowerShell:
+
+```powershell
 java -version
 mvn -version
+```
+
+Maven phải hiển thị `Java version: 21.0.12.1`. Cũng có thể kiểm tra Docker và Python trong Git Bash:
+
+```bash
 docker version
 docker compose version
 py -3 --version
 ```
 
-Java được Maven sử dụng phải là 21. Docker chạy Tomcat 10.1/JDK 21, nên không cần cài Tomcat riêng để làm theo hướng dẫn chính này.
+Không cần cài Tomcat riêng nếu chạy theo hướng dẫn này; container dùng Tomcat `10.1-jdk21`.
 
-## 2. Lấy code mới
+## 2. Cập nhật mã nguồn
+
+Mở terminal Git Bash tại thư mục gốc repository. Giữ nguyên các thay đổi local trước khi pull; không dùng lệnh reset để xóa chúng.
 
 ```bash
 git status
 git switch feat/route-trip-management
 git pull --ff-only origin feat/route-trip-management
-code .
 ```
 
-Nếu Git báo có thay đổi local ngăn việc pull, lưu/commit phần việc đó trước; không dùng reset để xóa thay đổi.
+## 3. Build WAR và chạy test nghiệp vụ
 
-## 3. Build và chạy
-
-Build WAR và chạy test trước khi tạo container backend:
+Chạy ở thư mục gốc:
 
 ```bash
 mvn -f src/backend/pom.xml -B clean verify
+```
+
+Kết quả cần có `BUILD SUCCESS`; test nghiệp vụ hiện có 12 test. Trong lần chạy ban đầu, quá trình test compile báo thiếu một số file `.class` trong `target/classes`. Xóa thư mục build cũ rồi chạy `clean verify` đã khắc phục:
+
+```bash
+rm -rf src/backend/target
+mvn -f src/backend/pom.xml -B clean verify
+```
+
+Lệnh trên là cú pháp Git Bash. Nếu dùng PowerShell, lệnh xóa tương đương là `Remove-Item -Recurse -Force src/backend/target`.
+
+## 4. Khởi chạy PostgreSQL và Tomcat
+
+Đảm bảo Docker Desktop đang chạy, sau đó:
+
+```bash
 docker compose up -d backend
 docker compose ps
+```
+
+Chờ PostgreSQL hiện `healthy` và backend hiện `Up`. Compose chạy PostgreSQL 16 tại cổng `5432`, Tomcat 10.1 tại cổng `8080`, và triển khai WAR vào context gốc.
+
+Kiểm tra endpoint tỉnh/thành:
+
+```bash
 curl -i http://localhost:8080/api/tinh-thanh
 ```
 
-Maven phải báo `BUILD SUCCESS`, `Tests run: 12, Failures: 0, Errors: 0, Skipped: 0`. Sau khi Tomcat khởi động, yêu cầu kiểm tra trả HTTP 200 và JSON (thường là `[]` trên DB mới). Nếu yêu cầu đầu tiên chưa thành công ngay, xem log và thử lại khi Tomcat khởi động xong:
+Kết quả đúng khi nhận `HTTP/1.1 200` và JSON. Database mới, chưa có dữ liệu, sẽ trả `[]`. Mở URL này trên trình duyệt cũng kiểm tra được backend trực tiếp; việc đó **không** có nghĩa giao diện frontend đã tích hợp API.
 
-```bash
-docker compose logs --tail=80 backend
-```
+### Nếu báo thiếu bảng trong database
 
-DB mới sẽ chạy schema tự động. Nếu đã có volume DB từ phiên bản cũ và log báo thiếu bảng, áp dụng schema:
+Docker chỉ tự chạy script trong `/docker-entrypoint-initdb.d` khi tạo volume PostgreSQL lần đầu. Nếu volume đã có sẵn, áp dụng schema thủ công một lần từ thư mục gốc:
 
 ```bash
 docker exec -i datvexe-postgres psql -U datvexe_user -d datvexe -v ON_ERROR_STOP=1 < docs/database/schema/001_route_trip.sql
 docker compose restart backend
 ```
 
-Sau mỗi lần sửa code Java:
+Schema dùng `CREATE TABLE IF NOT EXISTS`, không xóa dữ liệu hiện có. Sau restart, chờ Tomcat khởi động rồi mới gọi `curl`; nếu gọi quá sớm có thể nhận `Empty reply from server`. Nếu lỗi vẫn còn, xem log:
 
 ```bash
-mvn -f src/backend/pom.xml -B verify
+docker compose logs --tail=100 backend
+```
+
+Nếu vừa sửa mã Java, build lại WAR rồi khởi động lại container:
+
+```bash
+mvn -f src/backend/pom.xml -B clean verify
 docker compose restart backend
 ```
 
-Tomcat dùng API gốc `/api`, ví dụ `/api/ben-xe`, `/api/tuyen-xe`. Truy cập `/` không phải giao diện frontend.
-
-## 4. Kiểm tra toàn bộ task
-
-Sau khi API đã sẵn sàng, chạy tại gốc repository:
-
-```bash
-py -3 tests/backend/api_smoke.py
-```
-
-Nếu Python được cài dưới tên `python` hoặc `python3`, có thể thay `py -3` bằng tên lệnh tương ứng. Kết quả mong đợi:
-
-```text
-PASS: station/route CRUD and endpoints
-PASS: stop insert/reorder/delete and invalid lists
-PASS: trip create, overnight, vehicle assignment/conflicts, reschedule rollback
-PASS: search by station/city/date, no trips, cancelled/completed and lifecycle
-PASS: validation/404/409 and JSON error responses
-PASS: 5 API scenarios, 75 HTTP responses checked
-```
-
-Script tạo dữ liệu thử với mã ngẫu nhiên và dọn dữ liệu đó sau lượt chạy. Nó tạo xe mẫu trực tiếp trong PostgreSQL vì task này chưa có API CRUD xe đầy đủ. Các thao tác gán xe, đổi lịch, hủy và tìm chuyến đều được kiểm tra qua HTTP. Chi tiết từng yêu cầu và các test nghiệp vụ ở `tests/backend/README.md`.
-
-## 5. Kiểm tra bằng Postman hoặc Thunder Client
-
-Chọn body JSON, header `Content-Type: application/json`. Tạo dữ liệu theo thứ tự:
-
-1. `POST /api/tinh-thanh` với `{"maTinhThanh":"HCM","tenTinhThanh":"TP. Hồ Chí Minh"}` và `{"maTinhThanh":"LD","tenTinhThanh":"Lâm Đồng"}`.
-2. `POST /api/ben-xe` với `{"maBenXe":"BX1","tenBenXe":"Bến 1","diaChi":"HCM","maTinhThanh":"HCM"}` và `{"maBenXe":"BX2","tenBenXe":"Bến 2","diaChi":"Đà Lạt","maTinhThanh":"LD"}`.
-3. `POST /api/tuyen-xe` với JSON sau:
-
-```json
-{"maTuyen":"TX1","tenTuyen":"HCM - Đà Lạt","tramKhoiHanh":"BX1","tramDen":"BX2","thoiGianKhoiHanh":"08:00:00","thoiGianDuKien":6.5,"giaCoBan":250000,"trangThai":"DANG_KHAI_THAC"}
-```
-
-4. `POST /api/chuyen-xe` với `{"maChuyen":"CX1","maTuyen":"TX1","ngayKhoiHanh":"2030-01-01"}`. Mong đợi 201, trạng thái `CHUA_KHOI_HANH`, giờ đến `2030-01-01T14:30:00`.
-5. `GET /api/chuyen-xe?from=BX1&to=BX2&date=2030-01-01` trả chuyến `CX1`; thay ngày không có chuyến thì trả `200 []`.
-6. `POST /api/chuyen-xe/CX1/huy`, rồi gọi lại tìm kiếm: `CX1` không còn trong kết quả. `GET /api/chuyen-xe/CX1/trang-thai` vẫn trả `DA_HUY`.
-
-Các API CRUD, điểm dừng, trạm đầu/cuối, gán xe và chuyển trạng thái còn lại được liệt kê đầy đủ trong `src/backend/README.md`. Tìm kiếm hiện nhận **mã bến hoặc mã tỉnh/thành**, không nhận tên nhập tự do.
-
-## 6. Nếu dùng Tomcat đã cài trên máy
-
-Tomcat cần là **10.1.x**, chạy bằng **Java 21**. Có thể chạy riêng DB bằng `docker compose up -d postgres`, build WAR như trên, rồi chép WAR vào thư mục `webapps` của Tomcat. Đặt tên WAR là `ROOT.war` để giữ URL `/api`; nếu giữ tên WAR ban đầu, URL sẽ có thêm tên ứng dụng trước `/api`.
-
-Ứng dụng kết nối DB qua `DATABASE_URL`, `POSTGRES_USER`, `POSTGRES_PASSWORD`. Giá trị phát triển mặc định tương ứng DB Compose tại `jdbc:postgresql://localhost:5432/datvexe`. Bộ kiểm tra HTTP mặc định gọi port 8080; nếu Tomcat dùng port/context khác, đặt `API_BASE_URL` trước khi chạy script.
-
-Tránh chạy Tomcat riêng và container backend cùng port 8080. Nếu chọn container, hãy dừng Tomcat riêng; nếu chọn Tomcat riêng, dừng container backend bằng `docker compose stop backend`.
-
-## 7. Dừng dịch vụ
+## 5. Dừng dịch vụ
 
 ```bash
 docker compose stop
 ```
 
-Lệnh này giữ dữ liệu DB cho lần chạy sau. Frontend hiện vẫn dùng mock data; kết quả kiểm tra ở trên là kết quả của backend API.
+Lệnh này dừng container nhưng giữ volume database để dùng lại ở lần chạy sau.
