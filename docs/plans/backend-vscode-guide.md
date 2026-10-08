@@ -46,7 +46,7 @@ Chạy ở thư mục gốc:
 mvn -f src/backend/pom.xml -B clean verify
 ```
 
-Kết quả cần có `BUILD SUCCESS`; test nghiệp vụ hiện có 12 test. Trong lần chạy ban đầu, quá trình test compile báo thiếu một số file `.class` trong `target/classes`. Xóa thư mục build cũ rồi chạy `clean verify` đã khắc phục:
+Kết quả cần có `BUILD SUCCESS`; hiện có 13 test nghiệp vụ và kiểm tra mapping 20 entity. Trong lần chạy ban đầu, quá trình test compile báo thiếu một số file `.class` trong `target/classes`. Xóa thư mục build cũ rồi chạy `clean verify` đã khắc phục:
 
 ```bash
 rm -rf src/backend/target
@@ -76,7 +76,7 @@ Kết quả đúng khi nhận `HTTP/1.1 200` và JSON. Database mới, chưa có
 
 ### Nếu báo thiếu bảng trong database
 
-Docker chỉ tự chạy script trong `/docker-entrypoint-initdb.d` khi tạo volume PostgreSQL lần đầu. Nếu volume đã có sẵn, áp dụng schema thủ công một lần từ thư mục gốc:
+Docker chỉ tự chạy script trong `/docker-entrypoint-initdb.d` khi tạo volume PostgreSQL lần đầu. Nếu volume đã có sẵn từ bản trước, áp dụng schema nền và migration đủ 20 entity theo thứ tự từ thư mục gốc:
 
 ```bash
 docker exec -i datvexe-postgres psql -U datvexe_user -d datvexe -v ON_ERROR_STOP=1 < docs/database/schema/001_route_trip.sql

@@ -12,6 +12,7 @@ import urllib.request
 import uuid
 
 BASE = os.environ.get("API_BASE_URL", "http://localhost:8080/api").rstrip("/")
+DB_CONTAINER = os.environ.get("DB_CONTAINER", "datvexe-postgres")
 PREFIX = "qa_" + uuid.uuid4().hex[:10] + "_"
 requests_checked = 0
 
@@ -22,7 +23,7 @@ def ident(name):
 
 def sql(statement):
     subprocess.run([
-        "docker", "exec", "-i", "datvexe-postgres", "psql", "-U", "datvexe_user",
+        "docker", "exec", "-i", DB_CONTAINER, "psql", "-U", "datvexe_user",
         "-d", "datvexe", "-v", "ON_ERROR_STOP=1", "-c", statement,
     ], check=True, stdout=subprocess.DEVNULL)
 

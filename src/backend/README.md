@@ -1,12 +1,12 @@
 # Backend quản lý tuyến và chuyến xe
 
-Phần này dùng Java 21, Jakarta Servlet 6.0, Hibernate/JPA, PostgreSQL 16 và Tomcat 10.1. Entity và các quan hệ của `TinhThanh`, `BenXe`, `DiemDung`, `TuyenXe`, `ChuyenXe` theo class diagram nhóm đã chốt. `TuyenXe` giữ hai `BenXe` đầu/cuối riêng; `DiemDung` là danh sách điểm dừng trung gian có thứ tự và **không** có khóa ngoại tới `BenXe`.
+Phần này dùng Java 21, Jakarta Servlet 6.0, Hibernate/JPA, PostgreSQL 16 và Tomcat 10.1. `Entities.java` và `persistence.xml` khai báo mapping JPA cho đủ 20 entity trong class diagram đã chốt: `TinhThanh`, `BenXe`, `TuyenXe`, `DiemDung`, `ChuyenXe`, `NhaXe`, `NhanVien`, `PhanCongChuyenXe`, `LoaiXe`, `Xe`, `Ghe`, `GiuCho`, `NguoiDung`, `DanhGia`, `DonDatVe`, `VeXe`, `ThanhToan`, `PhuongThucThanhToan`, `ChinhSachHoanVe` và `KhuyenMai`, cùng các enum trạng thái/loại.
 
-`NhaXe` và `Xe` hiện là entity tham chiếu tối thiểu để nối tuyến/chuyến với phân hệ công ty vận tải và phương tiện. Khi phân hệ đó được triển khai, cần hợp nhất mapping và migration, giữ nguyên các khóa ngoại `ma_nha_xe`, `ma_xe`.
+`TuyenXe` giữ hai `BenXe` đầu/cuối riêng; `DiemDung` là danh sách điểm dừng trung gian có thứ tự và **không** có khóa ngoại tới `BenXe`. Các entity xe, nhân viên, tài khoản, đặt vé, thanh toán và khuyến mãi đã có mapping quan hệ/schema làm nền cho các thành viên phụ trách module; API/service CRUD của những module đó chưa nằm trong backend này.
 
 ## Chạy trên máy phát triển
 
-Từ `src/backend`, chạy `mvn -B verify` bằng Maven 3.9.9 và Java 21. Từ thư mục gốc repository, chạy `docker compose up -d backend`. Compose tạo PostgreSQL, chạy `docs/database/schema/001_route_trip.sql` **khi volume mới được tạo**, rồi triển khai WAR vào Tomcat 10.1. Nếu volume PostgreSQL đã tồn tại từ trước, áp dụng schema một lần:
+Từ `src/backend`, chạy `mvn -B verify` bằng Maven 3.9.9 và Java 21. Từ thư mục gốc repository, chạy `docker compose up -d backend`. Compose tạo PostgreSQL, chạy `docs/database/schema/001_route_trip.sql` **khi volume mới được tạo**, rồi triển khai WAR vào Tomcat 10.1. File schema duy nhất cũng có thể nâng cấp database route-trip cũ; nếu volume đã tồn tại, áp dụng file một lần:
 
 ```bash
 docker exec -i datvexe-postgres psql -U datvexe_user -d datvexe -v ON_ERROR_STOP=1 < docs/database/schema/001_route_trip.sql
@@ -46,4 +46,4 @@ Ví dụ tạo tuyến sau khi đã có hai bến `BX1`, `BX2`:
 
 Không có chuyến phù hợp trả `200` với `[]`. Chuyến hủy vẫn đọc được qua API chi tiết/trạng thái nhưng không nằm trong kết quả tìm kiếm; chuyến hoàn tất cũng được loại khỏi kết quả. Ngày/giờ đầu ra là chuỗi ISO. Hướng dẫn chạy test và bảng đối chiếu yêu cầu nằm ở `tests/backend/README.md` từ gốc repository.
 
-Chưa có đăng nhập, phân quyền, API quản lý `NhaXe`/`Xe` đầy đủ hoặc luồng đặt vé trên nhánh này. Không triển khai API này ra Internet trước khi hoàn thiện các phần đó.
+Chưa có đăng nhập, phân quyền, API CRUD đầy đủ cho các module nhà xe/nhân viên/xe/đặt vé/thanh toán hoặc luồng đặt vé trên nhánh này. Các entity và schema là nền dữ liệu, không thay thế phần service/controller của từng module. Không triển khai API này ra Internet trước khi hoàn thiện xác thực và phân quyền.
