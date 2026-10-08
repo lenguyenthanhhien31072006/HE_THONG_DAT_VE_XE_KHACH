@@ -76,7 +76,7 @@ Kết quả đúng khi nhận `HTTP/1.1 200` và JSON. Database mới, chưa có
 
 ### Nếu báo thiếu bảng trong database
 
-Docker chỉ tự chạy script trong `/docker-entrypoint-initdb.d` khi tạo volume PostgreSQL lần đầu. Nếu volume đã có sẵn từ bản trước, áp dụng schema nền và migration đủ 20 entity theo thứ tự từ thư mục gốc:
+Docker chỉ tự chạy script trong `/docker-entrypoint-initdb.d` khi tạo volume PostgreSQL lần đầu. Nếu volume đã có sẵn từ bản trước, áp dụng file schema duy nhất từ thư mục gốc:
 
 ```bash
 docker exec -i datvexe-postgres psql -U datvexe_user -d datvexe -v ON_ERROR_STOP=1 < docs/database/schema/001_route_trip.sql
@@ -96,7 +96,23 @@ mvn -f src/backend/pom.xml -B clean verify
 docker compose restart backend
 ```
 
-## 5. Dừng dịch vụ
+## 5. Chạy smoke test API
+
+Sau khi `curl -i http://localhost:8080/api/tinh-thanh` trả `HTTP/1.1 200`, chạy bộ kiểm tra API từ thư mục gốc trong Git Bash:
+
+```bash
+py -3 tests/backend/api_smoke.py
+```
+
+Kết quả thành công có 5 dòng `PASS`, kết thúc bằng:
+
+```text
+PASS: 5 API scenarios, 75 HTTP responses checked
+```
+
+Smoke test tự tạo dữ liệu thử rồi dọn dữ liệu của lượt chạy; vì vậy gọi lại danh sách tỉnh/thành sau test vẫn có thể trả `[]`.
+
+## 6. Dừng dịch vụ
 
 ```bash
 docker compose stop
